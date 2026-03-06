@@ -86,9 +86,18 @@ export default function ContactSection() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-primary-foreground font-display font-semibold flex items-center justify-center gap-2"
+              disabled={status === 'sending'}
+              className="w-full py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-primary-foreground font-display font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              <Send size={16} /> Send Message
+              {status === 'sending' ? (
+                <><Loader2 size={16} className="animate-spin" /> Sending...</>
+              ) : status === 'success' ? (
+                <><CheckCircle size={16} /> Message sent successfully!</>
+              ) : status === 'error' ? (
+                <>Failed to send. Try again.</>
+              ) : (
+                <><Send size={16} /> Send Message</>
+              )}
             </motion.button>
           </motion.form>
 
