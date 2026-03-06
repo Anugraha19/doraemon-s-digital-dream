@@ -31,7 +31,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <a href="#home" className="font-display font-bold text-xl gradient-text">DN.</a>
+        <a href="#home" className="font-display font-bold text-xl gradient-text">AC.</a>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">

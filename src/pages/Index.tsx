@@ -13,8 +13,8 @@ const Scene3D = lazy(() => import('@/components/Scene3D'));
 const Index = () => {
   return (
     <div className="relative min-h-screen bg-background overflow-x-hidden">
-      {/* 3D Background - only in hero */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      {/* 3D Background - hero only */}
+      <div className="absolute inset-0 h-screen z-0 pointer-events-none">
         <Suspense fallback={null}>
           <Scene3D />
         </Suspense>
