@@ -7,11 +7,11 @@ export default function ContactSection() {
   const ref = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', company: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.company) return;
     setStatus('sending');
     try {
       await emailjs.send(
@@ -21,7 +21,7 @@ export default function ContactSection() {
         'Qs2p94aQ7_IFgBL91'
       );
       setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', company: '' });
       setTimeout(() => setStatus('idle'), 4000);
     } catch {
       setStatus('error');
