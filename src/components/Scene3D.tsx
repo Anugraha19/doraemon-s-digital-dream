@@ -1,141 +1,147 @@
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, MeshWobbleMaterial, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
-function GlowingSphere() {
+function AnimatedSphere() {
   const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.15;
-      meshRef.current.rotation.z = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  return (
-    <Float speed={1.5} rotationIntensity={0.4} floatIntensity={1.5}>
-      <mesh ref={meshRef} position={[0, 0, 0]}>
-        <icosahedronGeometry args={[1.8, 20]} />
-        <MeshDistortMaterial
-          color="#00d4ff"
-          emissive="#0066ff"
-          emissiveIntensity={0.4}
-          roughness={0.2}
-          metalness={0.8}
-          distort={0.3}
-          speed={2}
-          transparent
-          opacity={0.85}
-        />
-      </mesh>
-    </Float>
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uColor1: { value: new THREE.Color('#00d4ff') },
+      uColor2: { value: new THREE.Color('#a855f7') },
+      uColor3: { value: new THREE.Color('#06b6d4') },
+    }),
+    []
   );
-}
 
-function OrbitingRing({ radius, speed, color, thickness }: { radius: number; speed: number; color: string; thickness: number }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const vertexShader = `
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    uniform float uTime;
+    
+    void main() {
+      vNormal = normal;
+      vPosition = position;
+      
+      vec3 pos = position;
+      float displacement = sin(pos.x * 3.0 + uTime) * 0.15 
+                         + sin(pos.y * 4.0 + uTime * 1.3) * 0.1 
+                         + sin(pos.z * 2.0 + uTime * 0.7) * 0.12;
+      pos += normal * displacement;
+      
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
+  `;
+
+  const fragmentShader = `
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    uniform float uTime;
+    uniform vec3 uColor1;
+    uniform vec3 uColor2;
+    uniform vec3 uColor3;
+    
+    void main() {
+      float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.5);
+      
+      float pattern = sin(vPosition.x * 5.0 + uTime) * sin(vPosition.y * 5.0 + uTime * 0.8) * 0.5 + 0.5;
+      
+      vec3 color = mix(uColor1, uColor2, pattern);
+      color = mix(color, uColor3, fresnel * 0.6);
+      
+      float glow = fresnel * 0.8 + 0.2;
+      
+      gl_FragColor = vec4(color * glow, 0.9);
+    }
+  `;
 
   useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.x = state.clock.elapsedTime * speed * 0.5;
-      ref.current.rotation.y = state.clock.elapsedTime * speed;
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime * 0.6;
+    }
+    if (meshRef.current) {
+      meshRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.15) * 0.2;
     }
   });
 
   return (
-    <mesh ref={ref}>
-      <torusGeometry args={[radius, thickness, 16, 100]} />
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.5}
+    <mesh ref={meshRef} scale={2}>
+      <sphereGeometry args={[1, 64, 64]} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        uniforms={uniforms}
         transparent
-        opacity={0.6}
-        metalness={0.9}
-        roughness={0.1}
       />
     </mesh>
   );
 }
 
-function FloatingCubes() {
-  const groupRef = useRef<THREE.Group>(null);
-  const cubes = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => ({
-      position: [
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 8,
-      ] as [number, number, number],
-      scale: Math.random() * 0.3 + 0.1,
-      speed: Math.random() * 0.5 + 0.2,
-      color: ['#00d4ff', '#a855f7', '#06b6d4', '#8b5cf6'][i % 4],
-    }));
-  }, []);
+function GlowRing({ radius, rotationAxis, speed, color }: { radius: number; rotationAxis: 'x' | 'y' | 'z'; speed: number; color: string }) {
+  const ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.03;
+    if (ref.current) {
+      ref.current.rotation[rotationAxis] = state.clock.elapsedTime * speed;
+      if (rotationAxis === 'x') ref.current.rotation.z = Math.PI * 0.3;
+      if (rotationAxis === 'z') ref.current.rotation.x = Math.PI * 0.4;
     }
   });
 
   return (
-    <group ref={groupRef}>
-      {cubes.map((cube, i) => (
-        <Float key={i} speed={cube.speed * 3} rotationIntensity={2} floatIntensity={2}>
-          <mesh position={cube.position} scale={cube.scale}>
-            <octahedronGeometry args={[1, 0]} />
-            <MeshWobbleMaterial
-              color={cube.color}
-              emissive={cube.color}
-              emissiveIntensity={0.3}
-              factor={0.4}
-              speed={1}
-              transparent
-              opacity={0.7}
-              metalness={0.8}
-              roughness={0.2}
-            />
-          </mesh>
-        </Float>
-      ))}
-    </group>
+    <mesh ref={ref}>
+      <torusGeometry args={[radius, 0.015, 16, 100]} />
+      <meshBasicMaterial color={color} transparent opacity={0.5} />
+    </mesh>
   );
 }
 
-function Particles() {
-  const count = 150;
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 25;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 25;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 15;
-    }
-    return pos;
-  }, []);
-
+function FloatingParticles() {
+  const count = 120;
   const ref = useRef<THREE.Points>(null);
+
+  const { positions, colors } = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    const c1 = new THREE.Color('#00d4ff');
+    const c2 = new THREE.Color('#a855f7');
+    const c3 = new THREE.Color('#06b6d4');
+    const palette = [c1, c2, c3];
+
+    for (let i = 0; i < count; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 3 + Math.random() * 5;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      const color = palette[Math.floor(Math.random() * 3)];
+      col[i * 3] = color.r;
+      col[i * 3 + 1] = color.g;
+      col[i * 3 + 2] = color.b;
+    }
+    return { positions: pos, colors: col };
+  }, []);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.015;
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+      ref.current.rotation.y = state.clock.elapsedTime * 0.02;
+      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.03) * 0.1;
     }
   });
 
   return (
     <points ref={ref}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-          count={count}
-          itemSize={3}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} itemSize={3} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} count={count} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial size={0.05} color="#00d4ff" transparent opacity={0.5} sizeAttenuation />
+      <pointsMaterial size={0.04} vertexColors transparent opacity={0.7} sizeAttenuation />
     </points>
   );
 }
@@ -143,18 +149,16 @@ function Particles() {
 export default function Scene3D() {
   return (
     <div className="absolute inset-0">
-      <Canvas camera={{ position: [0, 0, 7], fov: 55 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#00d4ff" />
-        <pointLight position={[-10, -5, -10]} intensity={0.6} color="#a855f7" />
-        <spotLight position={[0, 10, 5]} intensity={0.5} color="#06b6d4" angle={0.5} penumbra={1} />
-        
-        <GlowingSphere />
-        <OrbitingRing radius={2.8} speed={0.3} color="#a855f7" thickness={0.02} />
-        <OrbitingRing radius={3.4} speed={-0.2} color="#00d4ff" thickness={0.015} />
-        <OrbitingRing radius={4.0} speed={0.15} color="#06b6d4" thickness={0.01} />
-        <FloatingCubes />
-        <Particles />
+      <Canvas camera={{ position: [0, 0, 5.5], fov: 50 }} dpr={[1, 2]}>
+        <ambientLight intensity={0.15} />
+        <pointLight position={[5, 5, 5]} intensity={0.4} color="#00d4ff" />
+        <pointLight position={[-5, -3, -5]} intensity={0.3} color="#a855f7" />
+
+        <AnimatedSphere />
+        <GlowRing radius={3.0} rotationAxis="y" speed={0.2} color="#00d4ff" />
+        <GlowRing radius={3.4} rotationAxis="x" speed={-0.15} color="#a855f7" />
+        <GlowRing radius={3.8} rotationAxis="z" speed={0.1} color="#06b6d4" />
+        <FloatingParticles />
       </Canvas>
     </div>
   );
