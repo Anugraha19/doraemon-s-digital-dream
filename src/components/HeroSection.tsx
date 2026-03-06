@@ -50,10 +50,10 @@ export default function HeroSection() {
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display mb-4">
             <span className="text-foreground">Hi, I'm </span>
-            <span className="gradient-text">Doraemon</span>
+            <span className="gradient-text">Anugraha</span>
           </h1>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display mb-8">
-            <span className="gradient-text">Nobita</span>
+            <span className="gradient-text">Chalwadi</span>
           </h1>
 
           <div className="h-10 md:h-12 flex items-center justify-center mb-10">
