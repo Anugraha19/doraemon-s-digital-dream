@@ -80,7 +80,7 @@ function AnimatedSphere({ segments }: { segments: number }) {
   });
 
   return (
-    <mesh ref={meshRef} scale={2}>
+    <mesh ref={meshRef} scale={1.4}>
       <sphereGeometry args={[1, segments, segments]} />
       <shaderMaterial
         ref={materialRef}
@@ -176,15 +176,15 @@ export default function Scene3D() {
 
   return (
     <div className="absolute inset-0">
-      <Canvas camera={{ position: [0, 0, 5.5], fov: 50 }} dpr={[1, 1.5]}>
+    <Canvas camera={{ position: [0, 0, 7], fov: 45 }} dpr={[1, 1.5]}>
         <ambientLight intensity={0.15} />
         <pointLight position={[5, 5, 5]} intensity={0.4} color="#00d4ff" />
         <pointLight position={[-5, -3, -5]} intensity={0.3} color="#a855f7" />
 
         <AnimatedSphere segments={48} />
-        <GlowRing radius={3.0} rotationAxis="y" speed={0.2} color="#00d4ff" tubularSegments={64} />
-        <GlowRing radius={3.4} rotationAxis="x" speed={-0.15} color="#a855f7" tubularSegments={64} />
-        <GlowRing radius={3.8} rotationAxis="z" speed={0.1} color="#06b6d4" tubularSegments={64} />
+        <GlowRing radius={2.2} rotationAxis="y" speed={0.2} color="#00d4ff" tubularSegments={64} />
+        <GlowRing radius={2.5} rotationAxis="x" speed={-0.15} color="#a855f7" tubularSegments={64} />
+        <GlowRing radius={2.8} rotationAxis="z" speed={0.1} color="#06b6d4" tubularSegments={64} />
         <FloatingParticles count={80} />
       </Canvas>
     </div>
