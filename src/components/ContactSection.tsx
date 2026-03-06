@@ -111,7 +111,7 @@ export default function ContactSection() {
                 <>Message not sent. Please try again later.</>
               ) : (
                 <><Send size={16} /> Send Message</>
-            </motion.button>
+              )}
             </motion.button>
           </motion.form>
 
