@@ -1,18 +1,32 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Send, Github, Linkedin, Mail } from 'lucide-react';
+import { Send, Github, Linkedin, Mail, CheckCircle, Loader2 } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 export default function ContactSection() {
   const ref = useRef(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`Contact from ${formData.name}`);
-    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
-    window.location.href = `mailto:anugrahachalwadi@gmail.com?subject=${subject}&body=${body}`;
-    setFormData({ name: '', email: '', message: '' });
+    setStatus('sending');
+    try {
+      await emailjs.send(
+        'service_vt8jn7w',
+        'template_npyefen',
+        { name: formData.name, email: formData.email, message: formData.message },
+        'Qs2p94aQ7_IFgBL91'
+      );
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setStatus('idle'), 4000);
+    } catch {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 4000);
+    }
   };
 
   return (
