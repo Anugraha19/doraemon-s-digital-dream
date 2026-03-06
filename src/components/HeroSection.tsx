@@ -80,13 +80,15 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      <motion.button
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer p-2 rounded-full hover:bg-primary/10 transition-colors"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
+        onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+        aria-label="Scroll to about section"
       >
         <ArrowDown className="text-muted-foreground" size={24} />
-      </motion.div>
+      </motion.button>
     </section>
   );
 }
