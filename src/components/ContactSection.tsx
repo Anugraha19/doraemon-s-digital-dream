@@ -11,7 +11,7 @@ export default function ContactSection() {
     e.preventDefault();
     const subject = encodeURIComponent(`Contact from ${formData.name}`);
     const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
-    window.location.href = `mailto:hello@example.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:anugrahachalwadi@gmail.com?subject=${subject}&body=${body}`;
     setFormData({ name: '', email: '', message: '' });
   };
 
@@ -92,7 +92,7 @@ export default function ContactSection() {
               {[
                 { icon: Github, href: '#', label: 'GitHub' },
                 { icon: Linkedin, href: '#', label: 'LinkedIn' },
-                { icon: Mail, href: 'mailto:hello@example.com', label: 'Email' },
+                { icon: Mail, href: 'mailto:anugrahachalwadi@gmail.com', label: 'Email' },
               ].map((social) => (
                 <motion.a
                   key={social.label}
