@@ -7,11 +7,12 @@ export default function ContactSection() {
   const ref = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', company: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.company) return;
     setStatus('sending');
     try {
       await emailjs.send(
@@ -21,7 +22,7 @@ export default function ContactSection() {
         'Qs2p94aQ7_IFgBL91'
       );
       setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', company: '' });
       setTimeout(() => setStatus('idle'), 4000);
     } catch {
       setStatus('error');
@@ -82,6 +83,19 @@ export default function ContactSection() {
                 required
               />
             </div>
+            {/* Honeypot field - hidden from users */}
+            <div className="absolute opacity-0 -z-10" aria-hidden="true">
+              <label htmlFor="company">Company</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -94,7 +108,7 @@ export default function ContactSection() {
               ) : status === 'success' ? (
                 <><CheckCircle size={16} /> Message sent successfully!</>
               ) : status === 'error' ? (
-                <>Failed to send. Try again.</>
+                <>Message not sent. Please try again later.</>
               ) : (
                 <><Send size={16} /> Send Message</>
               )}
