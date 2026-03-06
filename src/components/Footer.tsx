@@ -13,7 +13,7 @@ export default function Footer() {
           {[
             { icon: Github, href: '#' },
             { icon: Linkedin, href: '#' },
-            { icon: Mail, href: 'mailto:hello@example.com' },
+            { icon: Mail, href: 'mailto:anugrahachalwadi@gmail.com' },
           ].map((s, i) => (
             <a key={i} href={s.href} className="text-muted-foreground hover:text-primary transition-colors">
               <s.icon size={18} />
