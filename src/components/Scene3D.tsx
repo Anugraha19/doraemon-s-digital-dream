@@ -1,8 +1,20 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-function AnimatedSphere() {
+function useIsLowEnd() {
+  const [isLowEnd, setIsLowEnd] = useState(false);
+  useEffect(() => {
+    const nav = navigator as any;
+    const cores = nav.hardwareConcurrency || 4;
+    const memory = nav.deviceMemory || 4;
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    setIsLowEnd(cores <= 4 || memory <= 4 || isMobile);
+  }, []);
+  return isLowEnd;
+}
+
+function AnimatedSphere({ segments }: { segments: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
@@ -69,7 +81,7 @@ function AnimatedSphere() {
 
   return (
     <mesh ref={meshRef} scale={2}>
-      <sphereGeometry args={[1, 64, 64]} />
+      <sphereGeometry args={[1, segments, segments]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
@@ -81,7 +93,7 @@ function AnimatedSphere() {
   );
 }
 
-function GlowRing({ radius, rotationAxis, speed, color }: { radius: number; rotationAxis: 'x' | 'y' | 'z'; speed: number; color: string }) {
+function GlowRing({ radius, rotationAxis, speed, color, tubularSegments }: { radius: number; rotationAxis: 'x' | 'y' | 'z'; speed: number; color: string; tubularSegments: number }) {
   const ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -94,14 +106,13 @@ function GlowRing({ radius, rotationAxis, speed, color }: { radius: number; rota
 
   return (
     <mesh ref={ref}>
-      <torusGeometry args={[radius, 0.015, 16, 100]} />
+      <torusGeometry args={[radius, 0.015, 16, tubularSegments]} />
       <meshBasicMaterial color={color} transparent opacity={0.5} />
     </mesh>
   );
 }
 
-function FloatingParticles() {
-  const count = 120;
+function FloatingParticles({ count }: { count: number }) {
   const ref = useRef<THREE.Points>(null);
 
   const { positions, colors } = useMemo(() => {
@@ -126,7 +137,7 @@ function FloatingParticles() {
       col[i * 3 + 2] = color.b;
     }
     return { positions: pos, colors: col };
-  }, []);
+  }, [count]);
 
   useFrame((state) => {
     if (ref.current) {
@@ -146,19 +157,35 @@ function FloatingParticles() {
   );
 }
 
+function CSSFallback() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-[hsl(190,100%,50%)] to-[hsl(270,80%,60%)] opacity-30 blur-3xl animate-pulse" />
+      <div className="absolute top-1/3 left-1/3 w-[200px] h-[200px] rounded-full border border-[hsl(190,100%,50%)]/20 animate-spin" style={{ animationDuration: '20s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-[hsl(270,80%,60%)]/15 animate-spin" style={{ animationDuration: '30s', animationDirection: 'reverse' }} />
+    </div>
+  );
+}
+
 export default function Scene3D() {
+  const isLowEnd = useIsLowEnd();
+
+  if (isLowEnd) {
+    return <CSSFallback />;
+  }
+
   return (
     <div className="absolute inset-0">
-      <Canvas camera={{ position: [0, 0, 5.5], fov: 50 }} dpr={[1, 2]}>
+      <Canvas camera={{ position: [0, 0, 5.5], fov: 50 }} dpr={[1, 1.5]}>
         <ambientLight intensity={0.15} />
         <pointLight position={[5, 5, 5]} intensity={0.4} color="#00d4ff" />
         <pointLight position={[-5, -3, -5]} intensity={0.3} color="#a855f7" />
 
-        <AnimatedSphere />
-        <GlowRing radius={3.0} rotationAxis="y" speed={0.2} color="#00d4ff" />
-        <GlowRing radius={3.4} rotationAxis="x" speed={-0.15} color="#a855f7" />
-        <GlowRing radius={3.8} rotationAxis="z" speed={0.1} color="#06b6d4" />
-        <FloatingParticles />
+        <AnimatedSphere segments={48} />
+        <GlowRing radius={3.0} rotationAxis="y" speed={0.2} color="#00d4ff" tubularSegments={64} />
+        <GlowRing radius={3.4} rotationAxis="x" speed={-0.15} color="#a855f7" tubularSegments={64} />
+        <GlowRing radius={3.8} rotationAxis="z" speed={0.1} color="#06b6d4" tubularSegments={64} />
+        <FloatingParticles count={80} />
       </Canvas>
     </div>
   );
