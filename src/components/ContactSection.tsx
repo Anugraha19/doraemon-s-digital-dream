@@ -83,6 +83,19 @@ export default function ContactSection() {
                 required
               />
             </div>
+            {/* Honeypot field - hidden from users */}
+            <div className="absolute opacity-0 -z-10" aria-hidden="true">
+              <label htmlFor="company">Company</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -95,8 +108,10 @@ export default function ContactSection() {
               ) : status === 'success' ? (
                 <><CheckCircle size={16} /> Message sent successfully!</>
               ) : status === 'error' ? (
-                <>Failed to send. Try again.</>
+                <>Message not sent. Please try again later.</>
               ) : (
+                <><Send size={16} /> Send Message</>
+              )}
                 <><Send size={16} /> Send Message</>
               )}
             </motion.button>
