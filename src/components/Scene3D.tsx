@@ -80,7 +80,7 @@ function AnimatedSphere({ segments }: { segments: number }) {
   });
 
   return (
-    <mesh ref={meshRef} scale={2}>
+    <mesh ref={meshRef} scale={1.4}>
       <sphereGeometry args={[1, segments, segments]} />
       <shaderMaterial
         ref={materialRef}
