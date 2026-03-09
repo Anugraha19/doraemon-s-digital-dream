@@ -2,13 +2,13 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 
 const skills = [
-  { name: 'HTML', level: 90 },
-  { name: 'CSS', level: 85 },
-  { name: 'JavaScript', level: 75 },
-  { name: 'Bootstrap', level: 80 },
-  { name: 'Git & GitHub', level: 70 },
-  { name: 'Canva Design', level: 85 },
-  { name: 'AI Tools', level: 80 },
+  { name: 'HTML', level: 90, color: 'from-[hsl(190,100%,50%)] to-[hsl(210,100%,60%)]' },
+  { name: 'CSS', level: 85, color: 'from-[hsl(270,80%,60%)] to-[hsl(290,80%,50%)]' },
+  { name: 'JavaScript', level: 75, color: 'from-[hsl(50,100%,50%)] to-[hsl(40,100%,55%)]' },
+  { name: 'Bootstrap', level: 80, color: 'from-[hsl(270,80%,60%)] to-[hsl(250,80%,55%)]' },
+  { name: 'Git & GitHub', level: 70, color: 'from-[hsl(0,80%,55%)] to-[hsl(320,80%,55%)]' },
+  { name: 'Canva Design', level: 85, color: 'from-[hsl(190,100%,50%)] to-[hsl(170,100%,45%)]' },
+  { name: 'AI Tools', level: 80, color: 'from-[hsl(320,80%,55%)] to-[hsl(350,80%,55%)]' },
 ];
 
 export default function SkillsSection() {
@@ -16,38 +16,39 @@ export default function SkillsSection() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="skills" className="section-padding" ref={ref}>
-      <div className="max-w-3xl mx-auto">
+    <section id="skills" className="section-padding relative" ref={ref}>
+      <div className="max-w-4xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-14"
+          transition={{ duration: 0.7 }}
+          className="text-center mb-16"
         >
-          <p className="text-xs font-mono text-primary tracking-widest uppercase mb-3">Skills</p>
-          <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground">
-            What I work with
+          <h2 className="text-4xl md:text-5xl font-bold font-display mb-4">
+            My <span className="gradient-text">Skills</span>
           </h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-primary via-secondary to-accent mx-auto rounded-full" />
         </motion.div>
 
-        <div className="grid gap-5">
+        <div className="grid gap-6">
           {skills.map((skill, i) => (
             <motion.div
               key={skill.name}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="glass rounded-xl p-5 gradient-border group hover:scale-[1.02] transition-transform duration-300"
             >
-              <div className="flex justify-between mb-2">
-                <span className="font-display font-medium text-sm text-foreground">{skill.name}</span>
-                <span className="font-mono text-xs text-muted-foreground">{skill.level}%</span>
+              <div className="flex justify-between mb-3">
+                <span className="font-display font-semibold text-foreground">{skill.name}</span>
+                <span className="font-mono text-sm text-muted-foreground">{skill.level}%</span>
               </div>
-              <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full bg-primary"
+                  className={`h-full rounded-full bg-gradient-to-r ${skill.color}`}
                   initial={{ width: 0 }}
                   animate={isInView ? { width: `${skill.level}%` } : {}}
-                  transition={{ duration: 0.8, delay: 0.3 + i * 0.07, ease: 'easeOut' }}
+                  transition={{ duration: 1, delay: 0.5 + i * 0.1, ease: 'easeOut' }}
                 />
               </div>
             </motion.div>
