@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Eye, Mail } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 
 const roles = ['Student Developer', 'Web Developer', 'Tech Enthusiast', 'Creative Coder'];
 
@@ -33,61 +33,55 @@ export default function HeroSection() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <motion.p
-            className="text-sm md:text-base font-mono tracking-[0.3em] uppercase text-primary mb-6 glow-text-primary"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            Welcome to my world
-          </motion.p>
+          <p className="text-xs md:text-sm font-mono tracking-[0.2em] uppercase text-muted-foreground mb-8">
+            Portfolio — 2025
+          </p>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display mb-4">
-            <span className="text-foreground">Hi, I'm </span>
-            <span className="gradient-text">Anugraha</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-display mb-3 text-foreground leading-tight">
+            Anugraha
           </h1>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display mb-8">
-            <span className="gradient-text">Chalwadi</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-display mb-8 text-primary leading-tight">
+            Chalwadi
           </h1>
 
-          <div className="h-10 md:h-12 flex items-center justify-center mb-10">
-            <span className="text-xl md:text-2xl font-mono text-muted-foreground">
+          <div className="h-8 md:h-10 flex items-center justify-center mb-12">
+            <span className="text-base md:text-lg font-mono text-muted-foreground">
               {text}
-              <span className="animate-pulse text-primary">|</span>
+              <span className="animate-pulse text-primary">_</span>
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#projects"
-              className="glass glow-primary px-8 py-3 rounded-lg font-display font-semibold text-primary hover:bg-primary/10 transition-all duration-300 flex items-center justify-center gap-2"
+              className="px-6 py-2.5 rounded bg-primary text-primary-foreground font-display font-semibold text-sm hover:opacity-90 transition-opacity"
             >
-              <Eye size={18} /> View Projects
+              View Projects
             </a>
             <a
               href="#contact"
-              className="glass px-8 py-3 rounded-lg font-display font-semibold text-accent hover:bg-accent/10 transition-all duration-300 flex items-center justify-center gap-2"
+              className="px-6 py-2.5 rounded border border-border text-foreground font-display font-semibold text-sm hover:border-primary/50 transition-colors"
             >
-              <Mail size={18} /> Contact Me
+              Contact Me
             </a>
           </div>
         </motion.div>
       </div>
 
       <motion.button
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer p-2 rounded-full hover:bg-primary/10 transition-colors"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer p-2 text-muted-foreground hover:text-foreground transition-colors"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ repeat: Infinity, duration: 2.5 }}
         onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
         aria-label="Scroll to about section"
       >
-        <ArrowDown className="text-muted-foreground" size={24} />
+        <ArrowDown size={20} />
       </motion.button>
     </section>
   );
