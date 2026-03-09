@@ -5,7 +5,6 @@ import emailjs from '@emailjs/browser';
 
 export default function ContactSection() {
   const ref = useRef(null);
-  const formRef = useRef<HTMLFormElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [formData, setFormData] = useState({ name: '', email: '', message: '', company: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
@@ -31,64 +30,62 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="section-padding relative" ref={ref}>
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="section-padding" ref={ref}>
+      <div className="max-w-3xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="mb-14"
         >
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-4">
-            Get In <span className="gradient-text">Touch</span>
+          <p className="text-xs font-mono text-primary tracking-widest uppercase mb-3">Contact</p>
+          <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground">
+            Get in touch
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-primary via-secondary to-accent mx-auto rounded-full" />
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-5 gap-10">
           <motion.form
             onSubmit={handleSubmit}
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="glass rounded-2xl p-8 gradient-border space-y-5"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="md:col-span-3 space-y-4"
           >
             <div>
-              <label className="text-sm font-mono text-muted-foreground mb-2 block">Name</label>
+              <label className="text-xs font-mono text-muted-foreground mb-1.5 block">Name</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-muted/50 rounded-lg px-4 py-3 text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+                className="w-full bg-secondary rounded px-4 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all"
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-mono text-muted-foreground mb-2 block">Email</label>
+              <label className="text-xs font-mono text-muted-foreground mb-1.5 block">Email</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-muted/50 rounded-lg px-4 py-3 text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+                className="w-full bg-secondary rounded px-4 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all"
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-mono text-muted-foreground mb-2 block">Message</label>
+              <label className="text-xs font-mono text-muted-foreground mb-1.5 block">Message</label>
               <textarea
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 rows={4}
-                className="w-full bg-muted/50 rounded-lg px-4 py-3 text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all resize-none"
+                className="w-full bg-secondary rounded px-4 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-1 focus:ring-primary transition-all resize-none"
                 required
               />
             </div>
-            {/* Honeypot field - hidden from users */}
+            {/* Honeypot */}
             <div className="absolute opacity-0 -z-10" aria-hidden="true">
-              <label htmlFor="company">Company</label>
               <input
                 type="text"
-                id="company"
                 name="company"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -96,50 +93,47 @@ export default function ContactSection() {
                 autoComplete="off"
               />
             </div>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-primary-foreground font-display font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+              className="w-full py-2.5 rounded bg-primary text-primary-foreground font-display font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-60"
             >
               {status === 'sending' ? (
-                <><Loader2 size={16} className="animate-spin" /> Sending...</>
+                <><Loader2 size={14} className="animate-spin" /> Sending...</>
               ) : status === 'success' ? (
-                <><CheckCircle size={16} /> Message sent successfully!</>
+                <><CheckCircle size={14} /> Message sent successfully!</>
               ) : status === 'error' ? (
                 <>Message not sent. Please try again later.</>
               ) : (
-                <><Send size={16} /> Send Message</>
+                <><Send size={14} /> Send Message</>
               )}
-            </motion.button>
+            </button>
           </motion.form>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col justify-center items-center gap-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="md:col-span-2 flex flex-col justify-between"
           >
-            <p className="text-muted-foreground text-center leading-relaxed">
-              Feel free to reach out for collaborations, project ideas, or just to say hello!
+            <p className="text-sm text-muted-foreground leading-relaxed mb-8">
+              Open to collaborations, project ideas, or just a conversation. Feel free to reach out.
             </p>
 
-            <div className="flex gap-6">
+            <div className="flex gap-4">
               {[
                 { icon: Github, href: '#', label: 'GitHub' },
                 { icon: Linkedin, href: '#', label: 'LinkedIn' },
                 { icon: Mail, href: 'mailto:anugrahachalwadi@gmail.com', label: 'Email' },
               ].map((social) => (
-                <motion.a
+                <a
                   key={social.label}
                   href={social.href}
-                  whileHover={{ scale: 1.15, y: -3 }}
-                  className="glass w-14 h-14 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors gradient-border"
+                  className="w-10 h-10 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
                   aria-label={social.label}
                 >
-                  <social.icon size={22} />
-                </motion.a>
+                  <social.icon size={18} />
+                </a>
               ))}
             </div>
           </motion.div>

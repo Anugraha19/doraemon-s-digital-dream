@@ -27,43 +27,40 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass py-3' : 'py-5'
+        scrolled ? 'bg-background/90 backdrop-blur-md border-b border-border py-3' : 'py-5'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <a href="#home" className="font-display font-bold text-xl gradient-text">AC.</a>
+      <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
+        <a href="#home" className="font-display font-bold text-lg text-primary">AC.</a>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className="text-sm font-display text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm font-display text-muted-foreground hover:text-foreground transition-colors"
             >
               {item.label}
             </a>
           ))}
         </div>
 
-        {/* Mobile toggle */}
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass overflow-hidden"
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden"
           >
             <div className="flex flex-col items-center gap-4 py-6">
               {navItems.map((item) => (
@@ -71,7 +68,7 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-sm font-display text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm font-display text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {item.label}
                 </a>
